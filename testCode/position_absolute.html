@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .in{
+            position:relative;
+            width:100px;
+            height:100px;
+            border:10px solid black;
+            display: inline-block;
+        }
+        /*
+            ifc 계산.
+            normal flow의 현상으로 알아서 쌓이고 내려가고
+
+        */
+        .abs{
+            position:absolute;
+            width:50px;
+            height:50px;
+            background:red;
+            left:40px;
+            top:40px;
+        }
+    </style>
+</head>
+<body>
+    <div style="width:200px; height:200px; background:yellow; margin:100px">
+        <div style="width:100px; height:100px; position:absolute; background:red"></div>
+        <div style="width:100px; height:100px; position:absolute; background:blue; left:0"></div>
+    </div>
+    <div class="in"></div>
+    <div class="in">
+        <div class="abs"></div>
+    </div>
+    <div class="in"></div>
+    <div class="in"></div>
+    <div class="in"></div>
+    <div class="in"></div>
+    <div class="in">
+        <div class="abs"></div>
+    </div>
+</body>
+</html>

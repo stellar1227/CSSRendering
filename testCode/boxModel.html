@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        div{
+            font-size:0;
+            margin-bottom:20px;
+        }
+        .box1{
+            width:100px;
+            height:100px;
+            padding:10px;
+            border:10px solid black;
+            display: inline-block;
+        }
+        /*
+            box-sizing의 기본은 contents-box다
+        */
+        .box2{
+            width:100px;
+            height:100px;
+            padding:10px;
+            border:10px dashed rgba(0,0,0,0.5);
+            display: inline-block;
+        }
+        /*
+           border는 fragment영역에 그려진다.
+       */
+        .box3{
+            width:100px;
+            height:100px;
+            padding:10px;
+            border:10px dashed #000;
+            display: inline-block;
+        }
+        /*
+           그리는데 순서가 있다 box-shaow
+           레이아웃에 영향을 미치지 않는다.
+       */
+        .box4{
+            width:100px;
+            height:100px;
+            padding:10px;
+            border:10px dashed rgba(0,0,0,0.5);
+            display: inline-block;
+        }
+        /*
+           그리는데 순서가 있다 box-shaow
+           레이아웃에 영향을 미치지 않는다.
+       */
+        .box5{
+            width:100px;
+            height:100px;
+            padding:10px;
+            border:10px dashed rgba(0,0,0,0.5);
+            display: inline-block;
+        }
+        /*
+           box-shadow는 선언한 아래부터 그려진다 순서대로
+
+       */
+        .box6{
+            width:100px;
+            height:100px;
+            padding:10px;
+            border:10px dashed rgba(0,0,0,0.5);
+            display: inline-block;
+        }
+        /*
+           box-shadow는 선언한 아래부터 그려진다 순서대로
+
+       */
+        @keyframes ani {
+            to {
+                box-shadow:0 0 0 0 purple, 0 0 0 0 #aa0 ,inset 0 0 0 0 purple, inset 0 0 0 0 #aa0;
+            }
+            from{
+                box-shadow:0 0 0 10px purple, 0 0 0 20px #aa0 ,inset 0 0 0 10px purple, inset 0 0 0 20px #aa0;
+            }
+        }
+        .box6{
+            width:100px;
+            height:100px;
+            padding:10px;
+            border:10px dashed rgba(0,0,0,0.5);
+            display: inline-block;
+            font-size:15px
+        }
+        /*
+           outline의 스티치 기법ㄴ
+
+       */
+    </style>
+</head>
+<body>
+    <div>
+        <div class="box1" style="background:red"></div>
+        <div class="box1" style="background:blue; box-sizing:border-box"></div>
+    </div>
+    <div>
+        <div class="box2" style="background:red"></div>
+        <div class="box2" style="background:blue; box-sizing:border-box"></div>
+    </div>
+    <div>
+        <div class="box3" style="background:red"></div>
+        <div class="box3" style="background:blue; box-shadow:0 0 0 10px #aa0"></div>
+    </div>
+    <div>
+        <div class="box4" style="background:red"></div>
+        <div class="box4" style="background:blue; box-shadow:0 0 0 10px rgba(255,255,0 , 0.5)"></div>
+    </div>
+    <div><!-- geometry 재계산 시 -->
+        <div class="box4" style="background:red; position:relative;"></div>
+        <div class="box4" style="background:blue; box-shadow:0 0 0 10px rgba(255,255,0 , 1)"></div>
+    </div>
+    <div>
+        <div class="box5" style="background:red;"></div>
+        <div class="box5" style="background:blue; box-shadow:0 0 0 10px purple, 0 0 0 20px #aa0 ,inset 0 0 0 10px purple, inset 0 0 0 20px #aa0"></div>
+    </div>
+    <div><!-- 보더 레디우스 영향받음 -->
+        <div class="box5" style="background:red;"></div>
+        <div class="box5" style="background:blue; border-radius:50%; animation: ani 0.5s infinite"></div>
+    </div>
+    <div class="box6" style="background:brown; border-radius:15px; outline:10px solid brown; border:1px dashed #fff; color:#fff; box-shadow: 0 0 0 10px brown; ">stitched</div>
+
+</body>
+</html>
