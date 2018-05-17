@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style id="s">
+        .test{
+            background:#ff0;
+        }
+    </style>
+    <style>
+
+    </style>
+</head>
+<body>
+<div class="red red1">red</div>
+<div class="blue blue1">blue</div>
+
+<div class="red">red</div>
+<div class="blue">blue</div>
+<div class="red">red</div>
+<div class="blue">blue</div>
+<div class="red">red</div>
+<div class="blue">blue</div>
+<div class="red">red</div>
+<div class="blue">blue</div>
+
+<script>
+    const el = document.querySelector('#s');
+    const sheet = el.sheet;
+    const rules = sheet.cssRules;
+    const rule = rules[0];
+    console.log(sheet);
+    console.log(sheet.cssText);
+    document.querySelector('.red').onclick = _ => { //document에 등록되어있는 styleSheet를 건드리면 리렌더링을....
+        sheet.insertRule('.red{background:red}',rules.length);
+        sheet.insertRule('.blue{background:blue}',rules.length);
+    }
+    document.querySelector('.blue').onclick = _ => { //성능상의 저하가 없다 , 인라인 style을 핸들링하는것이 아니라 CSS오브젝트만 변경하는거라서.
+        sheet.deleteRule(rules.length-1);
+    }
+    console.log(sheet.cssText);
+</script>
+
+<div class="test"></div>
+<script>
+    //의존성이 없는 styleSheet부터 만들어본다. 벤더프리픽스의 자동처리를 위해 구조에 맞춰서 넣어볼까?
+    const Style =(_=>{ //난 스탈이 있냐없냐가 궁금해
+        const prop = new Map, prefix = 'webkit, moz, ms, chrome, o, khtml'.split(',');
+        const NONE = Symbol(); //unsupport case를 대비하기 위해
+        const BASE = document.body.style;
+        const getKey =key=>{
+            if(prop.has(key)) return prop.get(key); // 자 캐시에 그게 있으면 맵에서 꺼내줘
+            if(key in BASE) prop.set(key, key); // 바디스타일에 그 이름 그대로 있니? 있으면 캐시에 넣으렴
+            else if(!prefix.some(v=>{ //v가 프리픽스 문자열
+                //프리픽스 붙은 속성은 있니???
+                const newKey = v + key[0].toUpperCase() + key.substr(1); //프리픽스 설정
+                if(newKey in BASE){ //프리픽스 있니?
+                    prop.set(key, newKey);
+                    key = newKey; //그르든지
+                    return true; //some의 결과가 참이라서 밖으로 안녕 빠이
+                }else return false;
+            })){
+                prop.set(key, NONE);
+                key = NONE; //그르든지 2 어머나 프리픽스로도 안돼? 그런 키가 없어? ㅇㅅㅇ 하놔 지원안하는고네
+            }
+            return key; //그르든지 3
+        }
+        return class{
+            constructor(style){this._style = style;}
+            get(key){
+                key = getKey(key);
+                if(key === NONE) return null;
+                return this._style[key];
+            }
+            set(key, val){
+                key = getKey(key);
+                if(key !== NONE) this._style[key] = val;
+                return this;
+            }
+        }
+    })();
+
+
+    const Rule = class{ //난 룰을 감싸서 만들거야 프렘웍의 기본 역할모델 (나 잘하는것만 하자)
+        constructor(rule){
+            this._rule = rule;
+            this._style = new Style(rule.style);
+        }
+        get(key){
+            return this._style.get(key);
+        }
+        set(key, val){
+            this._style.set(key, val);
+            return this;
+        }
+    };
+
+    const Sheet = class{ // add remove의 역할
+        constructor(sheet){
+            this._sheet = sheet;
+            this._rules = new Map;
+        }
+        add(selector){
+            const index = this._sheet.cssRules.length;
+            this._sheet.insertRule(`${selector}{}`, index);
+            const cssRule = this._sheet.cssRules[index];
+            const rule = new Rule(cssRule);
+            this._rules.set(selector, rule);
+            return rule;
+        }
+        remove(selector){
+            if(!this._rules.contains(selector)) return;
+            const rule = this.rules.get(selector)._rule;
+            Array.from(this._sheet.cssRules).some((cssRule, index)=>{
+                if(cssRule === rule._rule){
+                    this._sheet.deleteRule(index);
+                    return true; //해당 셀렉터의 룰을 지워. ㅇㅅㅇ
+                }
+
+            })
+
+        }
+    }
+
+const sheet2 = new Sheet(document.styleSheets[1]);
+    sheet2.add('body').set('background', '#f00');
+    sheet2.add('.test').set('cssText', `
+        width:200px;
+        height:20px;
+        border:1px solid #fff;
+        color :#000;
+        background:#fff;
+    `);
+</script>
+</body>
+</html>
